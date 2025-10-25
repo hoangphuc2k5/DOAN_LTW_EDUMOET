@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${pageTitle}">Moderation</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <h1 class="h2 pt-3"><i class="bi bi-shield-check"></i> Content Moderation</h1>
+
+                <div class="row mt-4">
+                    <!-- Pending Questions -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-hourglass-split"></i> Pending Questions</h5>
+                                <h2 class="display-4" th:text="${pendingQuestions}">0</h2>
+                                <a href="/admin/moderation/questions/pending" class="btn btn-light mt-2">
+                                    Review Now <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approved Questions -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-check-circle"></i> Approved Questions</h5>
+                                <h2 class="display-4" th:text="${approvedQuestions}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Comments -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-chat-dots"></i> Pending Comments</h5>
+                                <h2 class="display-4" th:text="${pendingComments}">0</h2>
+                                <a href="/admin/moderation/comments/pending" class="btn btn-light mt-2">
+                                    Review Now <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approved Comments -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-check2-all"></i> Approved Comments</h5>
+                                <h2 class="display-4" th:text="${approvedComments}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5><i class="bi bi-lightning"></i> Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <a th:href="@{/admin/moderation/questions/pending}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-question-circle"></i> Review Pending Questions
+                            </a>
+                            <a th:href="@{/admin/moderation/comments/pending}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-chat-left-text"></i> Review Pending Comments
+                            </a>
+                            <a th:href="@{/admin/comments}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-list-ul"></i> View All Comments
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

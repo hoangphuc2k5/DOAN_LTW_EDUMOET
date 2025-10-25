@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${pageTitle}">Activity Logs</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <h1 class="h2 pt-3"><i class="bi bi-activity"></i> Activity Logs</h1>
+
+                <!-- Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h6>Total Logs</h6>
+                                <h3 th:text="${totalLogs}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <h6>Today's Activities</h6>
+                                <h3 th:text="${logsToday}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <h6>Total Logins</h6>
+                                <h3 th:text="${loginCount}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <h6>Questions Created</h6>
+                                <h3 th:text="${questionCount}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form th:action="@{/admin/activity-logs}" method="get" class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="search" 
+                                       th:value="${search}" placeholder="Search in details...">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" name="action">
+                                    <option value="">All Actions</option>
+                                    <option value="LOGIN">Login</option>
+                                    <option value="LOGOUT">Logout</option>
+                                    <option value="CREATE_QUESTION">Create Question</option>
+                                    <option value="EDIT_QUESTION">Edit Question</option>
+                                    <option value="DELETE_QUESTION">Delete Question</option>
+                                    <option value="CREATE_ANSWER">Create Answer</option>
+                                    <option value="VOTE">Vote</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">Filter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Logs Table -->
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Entity</th>
+                                        <th>Details</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="log : ${logs}">
+                                        <td th:text="${#temporals.format(log.createdAt, 'MMM dd HH:mm:ss')}">
+                                            Time
+                                        </td>
+                                        <td>
+                                            <strong th:text="${log.user != null ? log.user.username : 'System'}">user</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info" th:text="${log.action}">ACTION</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${log.entityType != null}">
+                                                <small th:text="${log.entityType} + ' #' + ${log.entityId}">Entity</small>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small th:text="${#strings.abbreviate(log.details, 60)}">Details...</small>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted" th:text="${log.ipAddress}">IP</small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav th:if="${totalPages > 1}">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/activity-logs(page=${currentPage - 1})}">Previous</a>
+                                </li>
+                                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                                    class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/activity-logs(page=${i})}" th:text="${i + 1}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/activity-logs(page=${currentPage + 1})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        .table-sm th, .table-sm td {
+            padding: 0.3rem;
+        }
+    </style>
+</div>
+</body>
+</html>
+

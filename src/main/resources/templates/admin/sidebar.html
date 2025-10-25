@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar" class="position-sticky pt-3">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/dashboard}" th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/admin/dashboard')} ? 'active' : ''">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/all-features}" th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/admin/all-features')} ? 'active' : ''">
+                <i class="bi bi-grid-3x3-gap"></i> All Features
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/users}" th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/admin/users')} ? 'active' : ''">
+                <i class="bi bi-people"></i> User Management
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/categories}">
+                <i class="bi bi-folder"></i> Categories
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/questions}">
+                <i class="bi bi-file-text"></i> Questions
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/comments}">
+                <i class="bi bi-chat-dots"></i> Comments
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/reports}">
+                <i class="bi bi-flag"></i> Reports
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/notifications}">
+                <i class="bi bi-bell"></i> Notifications
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/events}">
+                <i class="bi bi-calendar-event"></i> Events
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/settings}">
+                <i class="bi bi-gear"></i> System Settings
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/logs}">
+                <i class="bi bi-list-ul"></i> Activity Logs
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/statistics}">
+                <i class="bi bi-graph-up"></i> Statistics
+            </a>
+        </li>
+    </ul>
+
+    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <span>Back to Site</span>
+    </h6>
+    <ul class="nav flex-column mb-2">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/}">
+                <i class="bi bi-house-door"></i> Home
+            </a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+

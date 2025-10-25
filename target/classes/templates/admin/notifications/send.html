@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${pageTitle}">Send Notification</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <h1 class="h2 pt-3"><i class="bi bi-megaphone"></i> Send System Notification</h1>
+
+                <!-- Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                    <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Notifications</h5>
+                                <h2 th:text="${totalNotifications}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <h5 class="card-title">Unread Notifications</h5>
+                                <h2 th:text="${unreadNotifications}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Broadcast to All Users -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-broadcast"></i> Broadcast to All Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/notifications/broadcast-all}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Message Type:</label>
+                                <select name="type" class="form-select" required>
+                                    <option value="info" selected>Info (Blue)</option>
+                                    <option value="success">Success (Green)</option>
+                                    <option value="warning">Warning (Yellow)</option>
+                                    <option value="danger">Important (Red)</option>
+                                    <option value="announcement">Announcement</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message:</label>
+                                <textarea name="message" class="form-control" rows="4" 
+                                          placeholder="Enter your message for all users..." required></textarea>
+                                <div class="form-text">This will be sent to ALL registered users.</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send"></i> Send to All Users
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Broadcast to Role -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="bi bi-people"></i> Broadcast to Specific Role</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/notifications/broadcast-role}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Target Role:</label>
+                                <select name="role" class="form-select" required>
+                                    <option value="ROLE_ADMIN">Admin</option>
+                                    <option value="ROLE_MANAGER">Manager</option>
+                                    <option value="ROLE_USER" selected>User</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message Type:</label>
+                                <select name="type" class="form-select" required>
+                                    <option value="info" selected>Info</option>
+                                    <option value="success">Success</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="danger">Important</option>
+                                    <option value="announcement">Announcement</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message:</label>
+                                <textarea name="message" class="form-control" rows="4" 
+                                          placeholder="Enter your message for specific role..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-send"></i> Send to Role
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Quick Templates -->
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5><i class="bi bi-file-text"></i> Quick Templates</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <strong>System Maintenance:</strong>
+                                <p class="mb-0 text-muted">⚠️ The system will undergo maintenance on [DATE] from [TIME] to [TIME]. Please save your work.</p>
+                            </div>
+                            <div class="list-group-item">
+                                <strong>New Feature:</strong>
+                                <p class="mb-0 text-muted">🎉 We've just released a new feature! Check out [FEATURE NAME] in your dashboard.</p>
+                            </div>
+                            <div class="list-group-item">
+                                <strong>Policy Update:</strong>
+                                <p class="mb-0 text-muted">📋 Our community guidelines have been updated. Please review the new policies.</p>
+                            </div>
+                            <div class="list-group-item">
+                                <strong>Event Announcement:</strong>
+                                <p class="mb-0 text-muted">📅 Join us for [EVENT NAME] on [DATE]! Register now to participate.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

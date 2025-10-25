@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${pageTitle}">Pending Questions</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <h1 class="h2 pt-3"><i class="bi bi-hourglass-split"></i> Pending Questions</h1>
+
+                <!-- Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Questions List -->
+                <div th:if="${questions.empty}" class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No pending questions to review!
+                </div>
+
+                <div th:unless="${questions.empty}">
+                    <div th:each="question : ${questions.content}" class="card shadow mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${question.title}">Question Title</h5>
+                            <p class="card-text" th:utext="${#strings.abbreviate(question.body, 200)}">Question body...</p>
+                            
+                            <div class="mb-2">
+                                <span th:each="tag : ${question.tags}" class="badge bg-secondary me-1" th:text="${tag.name}">tag</span>
+                            </div>
+                            
+                            <small class="text-muted">
+                                By <strong th:text="${question.author.username}">user</strong> 
+                                on <span th:text="${#temporals.format(question.createdAt, 'MMM dd, yyyy HH:mm')}">date</span>
+                            </small>
+                        </div>
+                        <div class="card-footer">
+                            <form th:action="@{/admin/moderation/questions/{id}/approve(id=${question.id})}" 
+                                  method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-circle"></i> Approve
+                                </button>
+                            </form>
+                            <form th:action="@{/admin/moderation/questions/{id}/reject(id=${question.id})}" 
+                                  method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-x-circle"></i> Reject
+                                </button>
+                            </form>
+                            <a th:href="@{/questions/{id}(id=${question.id})}" class="btn btn-info btn-sm" target="_blank">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${totalPages > 1}">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/moderation/questions/pending(page=${currentPage - 1})}">Previous</a>
+                        </li>
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                            class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                            <a class="page-link" th:href="@{/admin/moderation/questions/pending(page=${i})}" th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/moderation/questions/pending(page=${currentPage + 1})}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </main>
+        </div>
+    </div>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

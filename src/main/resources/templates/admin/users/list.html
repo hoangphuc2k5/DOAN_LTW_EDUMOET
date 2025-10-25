@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${pageTitle}">User Management</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="bi bi-people"></i> User Management
+                    </h1>
+                </div>
+
+                <!-- Alert Messages -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form th:action="@{/admin/users}" method="get" class="row g-3">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="search" 
+                                       th:value="${search}" placeholder="Search by username or email...">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <a th:href="@{/admin/users}" class="btn btn-secondary w-100">
+                                    <i class="bi bi-x-circle"></i> Clear
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Total: <strong th:text="${totalItems}">0</strong> users found
+                            | Page <strong th:text="${currentPage + 1}">1</strong> of <strong th:text="${totalPages}">1</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Users List</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <a th:href="@{/admin/users(page=${currentPage}, sortBy='id', sortDir=${reverseSortDir}, search=${search})}">
+                                                ID <i class="bi" th:classappend="${sortBy == 'id'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a th:href="@{/admin/users(page=${currentPage}, sortBy='username', sortDir=${reverseSortDir}, search=${search})}">
+                                                Username <i class="bi" th:classappend="${sortBy == 'username'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                                            </a>
+                                        </th>
+                                        <th>Email</th>
+                                        <th>
+                                            <a th:href="@{/admin/users(page=${currentPage}, sortBy='role', sortDir=${reverseSortDir}, search=${search})}">
+                                                Role <i class="bi" th:classappend="${sortBy == 'role'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                                            </a>
+                                        </th>
+                                        <th>Status</th>
+                                        <th>
+                                            <a th:href="@{/admin/users(page=${currentPage}, sortBy='createdAt', sortDir=${reverseSortDir}, search=${search})}">
+                                                Joined <i class="bi" th:classappend="${sortBy == 'createdAt'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                                            </a>
+                                        </th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="user : ${users}">
+                                        <td th:text="${user.id}">1</td>
+                                        <td>
+                                            <a th:href="@{/admin/users/{id}(id=${user.id})}" th:text="${user.username}">username</a>
+                                        </td>
+                                        <td th:text="${user.email}">email@example.com</td>
+                                        <td>
+                                            <span class="badge" 
+                                                  th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : (${user.role == 'MANAGER'} ? 'bg-info' : 'bg-primary')"
+                                                  th:text="${user.role}">USER</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${user.isActive && !user.isBanned}" class="badge bg-success">Active</span>
+                                            <span th:if="${user.isBanned}" class="badge bg-danger">Banned</span>
+                                            <span th:if="${!user.isActive}" class="badge bg-secondary">Inactive</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy')}">Jan 01, 2024</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm btn-info" title="View">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-sm btn-warning" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav th:if="${totalPages > 1}" aria-label="User pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/users(page=${currentPage - 1}, sortBy=${sortBy}, sortDir=${sortDir}, search=${search})}">Previous</a>
+                                </li>
+                                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                                    class="page-item" 
+                                    th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/users(page=${i}, sortBy=${sortBy}, sortDir=${sortDir}, search=${search})}" th:text="${i + 1}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/users(page=${currentPage + 1}, sortBy=${sortBy}, sortDir=${sortDir}, search=${search})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

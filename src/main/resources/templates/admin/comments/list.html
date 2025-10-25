@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${pageTitle}">Comment Management</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <h1 class="h2 pt-3"><i class="bi bi-chat-dots"></i> Comment Management</h1>
+
+                <!-- Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Search -->
+                <form th:action="@{/admin/comments}" method="get" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" 
+                               th:value="${search}" placeholder="Search comments...">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                        <a th:href="@{/admin/comments}" class="btn btn-secondary">Clear</a>
+                    </div>
+                </form>
+
+                <!-- Table -->
+                <div class="card shadow">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Content</th>
+                                    <th>Author</th>
+                                    <th>On</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="comment : ${comments}">
+                                    <td th:text="${comment.id}">1</td>
+                                    <td>
+                                        <span th:text="${#strings.abbreviate(comment.body, 80)}">Comment text...</span>
+                                        <span th:if="${comment.isDeleted}" class="badge bg-danger ms-2">DELETED</span>
+                                    </td>
+                                    <td th:text="${comment.author.username}">user</td>
+                                    <td>
+                                        <span th:if="${comment.question != null}">
+                                            Q: <a th:href="@{/questions/{id}(id=${comment.question.id})}" 
+                                                  th:text="${#strings.abbreviate(comment.question.title, 40)}">Question</a>
+                                        </span>
+                                        <span th:if="${comment.answer != null}">
+                                            Answer ID: <span th:text="${comment.answer.id}">1</span>
+                                        </span>
+                                    </td>
+                                    <td th:text="${#temporals.format(comment.createdAt, 'MMM dd, yyyy')}">Date</td>
+                                    <td>
+                                        <span th:if="${comment.isApproved}" class="badge bg-success">Approved</span>
+                                        <span th:unless="${comment.isApproved}" class="badge bg-warning">Pending</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-info" 
+                                                    data-bs-toggle="modal" 
+                                                    th:data-bs-target="'#editModal' + ${comment.id}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button th:if="${!comment.isApproved}" type="button" class="btn btn-success" 
+                                                    data-bs-toggle="modal" 
+                                                    th:data-bs-target="'#approveModal' + ${comment.id}">
+                                                <i class="bi bi-check"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    th:data-bs-target="'#deleteModal' + ${comment.id}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Edit Modal -->
+                                        <div class="modal fade" th:id="'editModal' + ${comment.id}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5>Edit Comment</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <form th:action="@{/admin/comments/{id}/edit(id=${comment.id})}" method="post">
+                                                        <div class="modal-body">
+                                                            <textarea name="body" class="form-control" rows="4" 
+                                                                      th:text="${comment.body}" required></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-primary">Save</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Approve Modal -->
+                                        <div class="modal fade" th:id="'approveModal' + ${comment.id}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-success text-white">
+                                                        <h5>Approve Comment</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <form th:action="@{/admin/comments/{id}/approve(id=${comment.id})}" method="post">
+                                                        <div class="modal-body">
+                                                            <p>Approve this comment?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-success">Approve</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" th:id="'deleteModal' + ${comment.id}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5>Delete Comment</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <form th:action="@{/admin/comments/{id}/delete(id=${comment.id})}" method="post">
+                                                        <div class="modal-body">
+                                                            <p>Delete this comment?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <nav th:if="${totalPages > 1}">
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/comments(page=${currentPage - 1})}">Previous</a>
+                                </li>
+                                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                                    class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/comments(page=${i})}" th:text="${i + 1}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/comments(page=${currentPage + 1})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

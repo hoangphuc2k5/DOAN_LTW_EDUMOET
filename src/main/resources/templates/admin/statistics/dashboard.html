@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${pageTitle}">Statistics</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <h1 class="h2 pt-3"><i class="bi bi-graph-up"></i> Statistics & Reports</h1>
+
+                <!-- Overview Statistics -->
+                <h4 class="mt-4">System Overview</h4>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h6><i class="bi bi-people"></i> Total Users</h6>
+                                <h2 th:text="${totalUsers}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <h6><i class="bi bi-question-circle"></i> Total Questions</h6>
+                                <h2 th:text="${totalQuestions}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <h6><i class="bi bi-chat-left-text"></i> Total Answers</h6>
+                                <h2 th:text="${totalAnswers}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <h6><i class="bi bi-chat-dots"></i> Total Comments</h6>
+                                <h2 th:text="${totalComments}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Statistics -->
+                <h4 class="mt-4">User Statistics</h4>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-success">
+                            <div class="card-body">
+                                <h6>Active Users</h6>
+                                <h3 class="text-success" th:text="${activeUsers}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-danger">
+                            <div class="card-body">
+                                <h6>Banned Users</h6>
+                                <h3 class="text-danger" th:text="${bannedUsers}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-info">
+                            <div class="card-body">
+                                <h6>Total Categories</h6>
+                                <h3 class="text-info" th:text="${totalCategories}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Distribution -->
+                <h4 class="mt-4">Role Distribution</h4>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Admins</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-danger" role="progressbar" 
+                                         th:style="'width: 100%'" th:text="${adminCount}">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Managers</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" 
+                                         th:style="'width: 100%'" th:text="${managerCount}">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Users</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         th:style="'width: 100%'" th:text="${userCount}">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Moderation -->
+                <h4 class="mt-4">Content Moderation</h4>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Approved Questions</h6>
+                                <h3 class="text-success" th:text="${approvedQuestions}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Pending Questions</h6>
+                                <h3 class="text-warning" th:text="${pendingQuestions}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Placeholder -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-bar-chart"></i> Activity Trends</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Charts coming soon! Will include:</p>
+                        <ul>
+                            <li>User registration trends</li>
+                            <li>Question posting frequency</li>
+                            <li>Most active tags</li>
+                            <li>Top contributors</li>
+                        </ul>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

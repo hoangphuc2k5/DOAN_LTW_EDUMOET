@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${pageTitle}">Category Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="bi bi-folder-plus"></i> 
+                        <span th:text="${category.id != null} ? 'Edit Category' : 'New Category'">New Category</span>
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a th:href="@{/admin/categories}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Error Messages -->
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Category Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="${category.id != null} ? @{/admin/categories/{id}/edit(id=${category.id})} : @{/admin/categories/new}" 
+                                      method="post" 
+                                      th:object="${category}">
+                                    
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Category Name: <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" th:field="*{name}" 
+                                               required maxlength="100" placeholder="Enter category name">
+                                        <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="slug" class="form-label">Slug: <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="slug" th:field="*{slug}" 
+                                               required maxlength="100" placeholder="category-slug">
+                                        <small class="text-muted">URL-friendly identifier (auto-generated from name if left empty)</small>
+                                        <div th:if="${#fields.hasErrors('slug')}" class="text-danger" th:errors="*{slug}"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description:</label>
+                                        <textarea class="form-control" id="description" th:field="*{description}" 
+                                                  rows="4" placeholder="Enter category description"></textarea>
+                                        <div th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="icon" class="form-label">Icon (Bootstrap Icons):</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">
+                                                        <i id="iconPreview" th:class="'bi ' + ${category.icon != null ? category.icon : 'bi-folder'}"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" id="icon" th:field="*{icon}" 
+                                                           placeholder="bi-folder" oninput="updateIconPreview()">
+                                                </div>
+                                                <small class="text-muted">
+                                                    Example: bi-folder, bi-book, bi-lightbulb 
+                                                    <a href="https://icons.getbootstrap.com/" target="_blank">Browse icons</a>
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="color" class="form-label">Color:</label>
+                                                <input type="color" class="form-control form-control-color" 
+                                                       id="color" th:field="*{color}" th:value="${category.color != null ? category.color : '#007bff'}">
+                                                <small class="text-muted">Choose a color for the category icon</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="displayOrder" class="form-label">Display Order:</label>
+                                                <input type="number" class="form-control" id="displayOrder" 
+                                                       th:field="*{displayOrder}" min="1" placeholder="1">
+                                                <small class="text-muted">Lower numbers appear first</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Status:</label>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           id="isActive" th:field="*{isActive}">
+                                                    <label class="form-check-label" for="isActive">
+                                                        Active
+                                                    </label>
+                                                </div>
+                                                <small class="text-muted">Only active categories are visible to users</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a th:href="@{/admin/categories}" class="btn btn-secondary">
+                                            Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save"></i> 
+                                            <span th:text="${category.id != null} ? 'Update Category' : 'Create Category'">Save</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Preview Card -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Preview</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <i id="previewIcon" th:class="'bi ' + ${category.icon != null ? category.icon : 'bi-folder'}" 
+                                       th:style="'font-size: 2rem; color: ' + ${category.color != null ? category.color : '#007bff'}"></i>
+                                    <div class="ms-3">
+                                        <h5 id="previewName" th:text="${category.name != null ? category.name : 'Category Name'}">Category Name</h5>
+                                        <p class="text-muted mb-0" id="previewDesc" 
+                                           th:text="${category.description != null ? category.description : 'Category description will appear here'}">
+                                            Category description
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+
+    <script>
+        // Auto-generate slug from name
+        document.getElementById('name').addEventListener('input', function() {
+            var name = this.value;
+            var slug = name.toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '')
+                .replace(/-+/g, '-');
+            
+            document.getElementById('slug').value = slug;
+            document.getElementById('previewName').textContent = name || 'Category Name';
+        });
+
+        // Update description preview
+        document.getElementById('description').addEventListener('input', function() {
+            document.getElementById('previewDesc').textContent = this.value || 'Category description will appear here';
+        });
+
+        // Update icon preview
+        function updateIconPreview() {
+            var icon = document.getElementById('icon').value || 'bi-folder';
+            document.getElementById('iconPreview').className = 'bi ' + icon;
+            document.getElementById('previewIcon').className = 'bi ' + icon;
+            
+            var color = document.getElementById('color').value;
+            document.getElementById('previewIcon').style.color = color;
+        }
+
+        // Update color preview
+        document.getElementById('color').addEventListener('input', function() {
+            document.getElementById('previewIcon').style.color = this.value;
+        });
+
+        // Initialize preview on page load
+        window.addEventListener('load', function() {
+            updateIconPreview();
+        });
+    </script>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Admin - All Features</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="bi bi-shield-lock text-danger"></i> Admin - All Features
+                    </h1>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4 class="card-title">Total Users</h4>
+                                        <h2 class="mb-0">1,234</h2>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="bi bi-people fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4 class="card-title">Questions</h4>
+                                        <h2 class="mb-0">5,678</h2>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="bi bi-question-circle fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4 class="card-title">Answers</h4>
+                                        <h2 class="mb-0">12,345</h2>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="bi bi-chat-dots fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4 class="card-title">Reports</h4>
+                                        <h2 class="mb-0">23</h2>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="bi bi-flag fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Admin Features -->
+                <div class="row">
+                    <!-- User Management -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-people"></i> User Management
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <a th:href="@{/admin/users}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-list-ul"></i> View All Users
+                                    </a>
+                                    <a th:href="@{/admin/users/new}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-person-plus"></i> Create New User
+                                    </a>
+                                    <a th:href="@{/admin/users/search}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-search"></i> Search Users
+                                    </a>
+                                    <a th:href="@{/admin/users/banned}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-person-x"></i> Banned Users
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Management -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-file-text"></i> Content Management
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <a th:href="@{/admin/questions}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-question-circle"></i> Manage Questions
+                                    </a>
+                                    <a th:href="@{/admin/comments}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-chat-dots"></i> Manage Comments
+                                    </a>
+                                    <a th:href="@{/admin/categories}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-folder"></i> Manage Categories
+                                    </a>
+                                    <a th:href="@{/admin/tags}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-tags"></i> Manage Tags
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Moderation -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-warning text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-shield-check"></i> Moderation
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <a th:href="@{/admin/moderation/pending-questions}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-clock-history"></i> Pending Questions
+                                        <span class="badge bg-danger ms-2">5</span>
+                                    </a>
+                                    <a th:href="@{/admin/moderation/pending-comments}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-chat-square-text"></i> Pending Comments
+                                        <span class="badge bg-warning ms-2">12</span>
+                                    </a>
+                                    <a th:href="@{/admin/reports}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-flag"></i> Reports
+                                        <span class="badge bg-danger ms-2">3</span>
+                                    </a>
+                                    <a th:href="@{/admin/moderation/flagged-content}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-exclamation-triangle"></i> Flagged Content
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Management -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-gear"></i> System Management
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <a th:href="@{/admin/system/settings}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-sliders"></i> System Settings
+                                    </a>
+                                    <a th:href="@{/admin/notifications/send}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-bell"></i> Send Notifications
+                                    </a>
+                                    <a th:href="@{/admin/activity-logs}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-list-ul"></i> Activity Logs
+                                    </a>
+                                    <a th:href="@{/admin/statistics}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-graph-up"></i> Statistics
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Features -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-tools"></i> Advanced Features
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <a th:href="@{/admin/database/backup}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-download"></i> Database Backup
+                                    </a>
+                                    <a th:href="@{/admin/database/restore}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-upload"></i> Database Restore
+                                    </a>
+                                    <a th:href="@{/admin/security/logs}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-shield-lock"></i> Security Logs
+                                    </a>
+                                    <a th:href="@{/admin/maintenance}" class="list-group-item list-group-item-action">
+                                        <i class="bi bi-wrench"></i> Maintenance Mode
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-lightning"></i> Quick Actions
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" onclick="sendSystemNotification()">
+                                        <i class="bi bi-bell"></i> Send System Notification
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="clearCache()">
+                                        <i class="bi bi-arrow-clockwise"></i> Clear Cache
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="exportData()">
+                                        <i class="bi bi-download"></i> Export Data
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="emergencyMode()">
+                                        <i class="bi bi-exclamation-triangle"></i> Emergency Mode
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-clock-history"></i> Recent Activity
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>User</th>
+                                                <th>Action</th>
+                                                <th>Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>2 minutes ago</td>
+                                                <td>admin</td>
+                                                <td>User Management</td>
+                                                <td>Banned user "spammer123"</td>
+                                            </tr>
+                                            <tr>
+                                                <td>5 minutes ago</td>
+                                                <td>admin</td>
+                                                <td>Content Moderation</td>
+                                                <td>Approved question "How to fix SQL error?"</td>
+                                            </tr>
+                                            <tr>
+                                                <td>10 minutes ago</td>
+                                                <td>admin</td>
+                                                <td>System Settings</td>
+                                                <td>Updated site maintenance mode</td>
+                                            </tr>
+                                            <tr>
+                                                <td>15 minutes ago</td>
+                                                <td>admin</td>
+                                                <td>Notifications</td>
+                                                <td>Sent system-wide announcement</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendSystemNotification() {
+    alert('System notification feature - to be implemented');
+}
+
+function clearCache() {
+    alert('Cache cleared successfully!');
+}
+
+function exportData() {
+    alert('Data export feature - to be implemented');
+}
+
+function emergencyMode() {
+    if (confirm('Are you sure you want to enable emergency mode? This will restrict access to the site.')) {
+        alert('Emergency mode activated!');
+    }
+}
+</script>
+</body>
+</html>

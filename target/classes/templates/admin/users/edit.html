@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${pageTitle}">Edit User</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div th:replace="~{admin/sidebar :: sidebar}"></div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="bi bi-pencil-square"></i> Edit User
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    Edit basic user information. For password reset, role change, or ban/unban actions, please use the quick actions on the user details page.
+                                </p>
+                                
+                                <hr>
+
+                                <form th:action="@{/admin/users/{id}/edit(id=${user.id})}" method="post">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username:</label>
+                                        <input type="text" class="form-control" id="username" name="username" 
+                                               th:value="${user.username}" readonly>
+                                        <small class="text-muted">Username cannot be changed</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email:</label>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               th:value="${user.email}" readonly>
+                                        <small class="text-muted">Email cannot be changed</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">Location:</label>
+                                        <input type="text" class="form-control" id="location" name="location" 
+                                               th:value="${user.location}">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="about" class="form-label">About:</label>
+                                        <textarea class="form-control" id="about" name="about" rows="4" 
+                                                  th:text="${user.about}"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Role:</label>
+                                        <p>
+                                            <span class="badge" 
+                                                  th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : (${user.role == 'MANAGER'} ? 'bg-info' : 'bg-primary')"
+                                                  th:text="${user.role}">USER</span>
+                                        </p>
+                                        <small class="text-muted">To change role, use "Change Role" action on user details page</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Status:</label>
+                                        <p>
+                                            <span th:if="${user.isActive && !user.isBanned}" class="badge bg-success">Active</span>
+                                            <span th:if="${user.isBanned}" class="badge bg-danger">Banned</span>
+                                            <span th:if="${!user.isActive}" class="badge bg-secondary">Inactive</span>
+                                        </p>
+                                        <small class="text-muted">To change status, use quick actions on user details page</small>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-secondary">
+                                            Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save"></i> Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+    </style>
+</div>
+</body>
+</html>
+

@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
 
@@ -53,6 +54,21 @@ public class ImageController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Failed to delete image: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getImage(@PathVariable Long id) {
+        try {
+            ImageAttachment attachment = imageService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
+            
+            return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(attachment.getContentType()))
+                .body(imageService.getImageData(attachment));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Image not found: " + e.getMessage());
         }
     }
 }

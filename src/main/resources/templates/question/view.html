@@ -189,6 +189,34 @@
         <i class="bi bi-info-circle"></i> 
         Please <a th:href="@{/login}">log in</a> to post an answer.
     </div>
+
+    <!-- Comments section -->
+    <div class="comments-section mt-3">
+        <h4>Comments</h4>
+        <!-- Existing comments -->
+        <div th:if="${not #lists.isEmpty(question.comments)}" class="mb-3">
+            <div th:each="comment : ${question.comments}" class="comment-item border-bottom py-2">
+                <div class="comment-content" th:text="${comment.body}"></div>
+                <div class="comment-meta small text-muted">
+                    - <a th:href="@{/users/{id}(id=${comment.author.id})}" th:text="${comment.author.username}">username</a>
+                    <span th:text="${#temporals.format(comment.createdAt, 'MMM dd, yyyy HH:mm')}">date</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add comment form -->
+        <div class="add-comment-form" sec:authorize="isAuthenticated()">
+            <form th:action="@{/questions/{id}/comments(id=${question.id})}" method="post">
+                <div class="form-group">
+                    <textarea name="body" class="form-control" rows="2" placeholder="Add a comment..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary mt-2">Add Comment</button>
+            </form>
+        </div>
+        <div sec:authorize="!isAuthenticated()" class="alert alert-info">
+            Please <a th:href="@{/login}">login</a> to add comments
+        </div>
+    </div>
 </div>
 </body>
 </html>

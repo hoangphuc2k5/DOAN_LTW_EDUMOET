@@ -150,5 +150,9 @@ public class QuestionService {
         question.setIsApproved(false);
         questionRepository.save(question);
     }
-}
 
+    @Transactional
+    public Question save(Question question) {
+        return questionRepository.save(question);
+    }
+}

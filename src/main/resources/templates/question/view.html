@@ -34,6 +34,22 @@
                         | Viewed <span th:text="${question.views}">0</span> times
                     </div>
                     <div class="mb-3" th:utext="${question.body}">Question body</div>
+                    
+                    <!-- Image Gallery -->
+                    <div class="mb-3" th:if="${not #lists.isEmpty(question.images)}">
+                        <div class="image-gallery">
+                            <div class="row g-2">
+                                <div class="col-md-3 col-sm-4 col-6" th:each="image : ${question.images}">
+                                    <div class="image-container">
+                                        <img th:src="@{'/api/images/' + ${image.id}}"
+                                             class="img-fluid rounded cursor-pointer"
+                                             th:onclick="'showImage(\'' + ${image.id} + '\')'">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <span th:each="tag : ${question.tags}" class="badge bg-secondary me-1" th:text="${tag.name}">tag</span>
                     </div>
@@ -145,11 +161,23 @@
     <div class="card mt-4" sec:authorize="isAuthenticated()">
         <div class="card-body">
             <h4>Your Answer</h4>
-            <form th:action="@{/answers/question/{id}(id=${question.id})}" method="post">
+            <form th:action="@{/answers/question/{id}(id=${question.id})}" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <textarea class="form-control" name="body" rows="10" required 
                               placeholder="Write your answer here..."></textarea>
                 </div>
+
+                <!-- Image Upload Section -->
+                <div class="mb-3">
+                    <label for="answerImages" class="form-label">Add Images (optional)</label>
+                    <input type="file" class="form-control" id="answerImages" name="images" 
+                           multiple accept="image/*" onchange="previewImages(event, 'answerImagePreview')">
+                    <small class="form-text text-muted">
+                        You can add multiple images (max 5MB each). Supported formats: JPG, PNG, GIF
+                    </small>
+                    <div id="answerImagePreview" class="image-preview-container"></div>
+                </div>
+
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-send"></i> Post Your Answer
                 </button>
@@ -164,4 +192,3 @@
 </div>
 </body>
 </html>
-

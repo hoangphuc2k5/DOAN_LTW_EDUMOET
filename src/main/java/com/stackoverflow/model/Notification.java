@@ -53,5 +53,40 @@ public class Notification {
         this.isRead = true;
         this.readAt = LocalDateTime.now();
     }
-}
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public void setRead(Boolean read) {
+        isRead = read;
+    }
+
+    public void setGlobal(Boolean global) {
+        isGlobal = global;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setReadAt(LocalDateTime readAt) {
+        this.readAt = readAt;
+    }
+}

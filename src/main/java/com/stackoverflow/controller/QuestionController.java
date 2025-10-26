@@ -1,21 +1,21 @@
 package com.stackoverflow.controller;
 
-import com.stackoverflow.model.Question;
-import com.stackoverflow.model.User;
-import com.stackoverflow.service.AnswerService;
-import com.stackoverflow.service.CommentService;
-import com.stackoverflow.service.QuestionService;
-import com.stackoverflow.service.UserService;
+import com.stackoverflow.model.*;
+import com.stackoverflow.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
 import java.util.Set;
+import java.util.List;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/questions")
@@ -32,6 +32,18 @@ public class QuestionController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WebSocketService webSocketService;
+    
+    @Autowired
+    private GroupService groupService;
+    
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private TagService tagService;
 
     @GetMapping("/{id}")
     public String viewQuestion(@PathVariable Long id, Model model) {
@@ -58,9 +70,9 @@ public class QuestionController {
 
     @PostMapping("/ask")
     public String askQuestion(
-            @Valid @ModelAttribute Question question,
-            @RequestParam String tags,
+            @Valid @ModelAttribute("question") Question question,
             BindingResult result,
+            @RequestParam(required = false) MultipartFile[] files,
             Authentication authentication,
             Model model) {
         
@@ -69,16 +81,41 @@ public class QuestionController {
             return "question/ask";
         }
         
-        User author = userService.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        question.setAuthor(author);
-        
-        // Parse tags
-        Set<String> tagNames = Set.of(tags.split("\\s+"));
-        Question savedQuestion = questionService.createQuestion(question, tagNames);
-        
-        return "redirect:/questions/" + savedQuestion.getId();
+        try {
+            User author = userService.findByUsername(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            question.setAuthor(author);
+            
+            // Process tags from the tag string
+            if (question.getTagString() != null && !question.getTagString().isEmpty()) {
+                Set<String> tagNames = Arrays.stream(question.getTagString().split("\\s*,\\s*"))
+                    .filter(tag -> !tag.isEmpty())
+                    .collect(Collectors.toSet());
+                Set<Tag> tags = tagService.getOrCreateTags(tagNames);
+                question.setTags(tags);
+            }
+            
+            // Save question first to get ID
+            Question savedQuestion = questionService.save(question);
+            
+            // Handle image uploads if any
+            if (files != null && files.length > 0) {
+                for (MultipartFile file : files) {
+                    if (!file.isEmpty()) {
+                        ImageAttachment image = imageService.saveQuestionImage(file, savedQuestion);
+                        savedQuestion.getImages().add(image);
+                    }
+                }
+                questionService.save(savedQuestion); // Save again with images
+            }
+            
+            return "redirect:/questions/" + savedQuestion.getId();
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to create question: " + e.getMessage());
+            model.addAttribute("pageTitle", "Ask a Question - Stack Overflow Clone");
+            return "question/ask";
+        }
     }
 
     @GetMapping("/{id}/edit")
@@ -176,5 +213,72 @@ public class QuestionController {
         questionService.downvoteQuestion(question, user);
         return String.valueOf(question.getVotes());
     }
-}
 
+    @PostMapping
+    public ResponseEntity<?> createQuestion(
+            @RequestParam String title,
+            @RequestParam String body,
+            @RequestParam(required = false) Long groupId,
+            @RequestParam(required = false) List<MultipartFile> images,
+            @RequestParam String tags,
+            @AuthenticationPrincipal User currentUser) {
+        try {
+            // Create question
+            Question question = new Question();
+            question.setTitle(title);
+            question.setBody(body);
+            question.setAuthor(currentUser);
+
+            // Handle group posting
+            if (groupId != null) {
+                UserGroup group = groupService.findById(groupId)
+                    .orElseThrow(() -> new RuntimeException("Group not found"));
+                
+                if (!group.getMembers().contains(currentUser)) {
+                    return ResponseEntity.badRequest()
+                        .body("You must be a member of the group to post");
+                }
+                
+                question.setGroup(group);
+            }
+
+            // Process tags
+            Set<Tag> tagSet = processTags(tags);
+            question.setTags(tagSet);
+
+            // Save question first to get ID
+            Question savedQuestion = questionService.save(question);
+
+            // Handle image uploads if any
+            if (images != null && !images.isEmpty()) {
+                for (MultipartFile image : images) {
+                    imageService.saveImage(image, savedQuestion.getId(), null, currentUser);
+                }
+            }
+
+            // Send notifications
+            if (groupId != null) {
+                webSocketService.notifyNewPost(question.getGroup(), savedQuestion);
+            }
+
+            return ResponseEntity.ok(savedQuestion);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body("Failed to create question: " + e.getMessage());
+        }
+    }
+
+    private Set<Tag> processTags(String tagString) {
+        return Arrays.stream(tagString.split("\\s+"))
+            .map(tagName -> {
+                Tag tag = tagService.findByName(tagName)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        return tagService.save(newTag);
+                    });
+                return tag;
+            })
+            .collect(Collectors.toSet());
+    }
+}

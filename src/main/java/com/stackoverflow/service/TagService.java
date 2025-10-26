@@ -50,15 +50,19 @@ public class TagService {
 
     public Set<Tag> getOrCreateTags(Set<String> tagNames) {
         Set<Tag> tags = new HashSet<>();
-        for (String tagName : tagNames) {
-            Tag tag = tagRepository.findByName(tagName.toLowerCase())
+        for (String name : tagNames) {
+            // Normalize tag name by trimming and converting to lowercase
+            String normalizedName = name.trim().toLowerCase();
+            if (!normalizedName.isEmpty()) {
+                Tag tag = tagRepository.findByName(normalizedName)
                     .orElseGet(() -> {
                         Tag newTag = new Tag();
-                        newTag.setName(tagName.toLowerCase());
+                        newTag.setName(normalizedName);
                         newTag.setQuestionCount(0);
                         return tagRepository.save(newTag);
                     });
-            tags.add(tag);
+                tags.add(tag);
+            }
         }
         return tags;
     }
@@ -66,5 +70,9 @@ public class TagService {
     public Tag updateTag(Tag tag) {
         return tagRepository.save(tag);
     }
-}
 
+    @Transactional
+    public Tag save(Tag tag) {
+        return tagRepository.save(tag);
+    }
+}

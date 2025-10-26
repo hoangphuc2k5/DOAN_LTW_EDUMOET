@@ -59,6 +59,15 @@ public class Question {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImageAttachment> images = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "question_tags",
@@ -67,11 +76,26 @@ public class Question {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    @Transient
+    private String tagString; // For form binding
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    public void setTagString(String tagString) {
+        this.tagString = tagString;
+    }
+
+    public String getTagString() {
+        if (tagString != null) {
+            return tagString;
+        }
+        return tags.stream()
+                  .map(Tag::getName)
+                  .reduce((a, b) -> a + " " + b)
+                  .orElse("");
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private UserGroup group;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accepted_answer_id")
@@ -97,4 +121,3 @@ public class Question {
         this.votes--;
     }
 }
-

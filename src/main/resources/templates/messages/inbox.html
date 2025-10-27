@@ -131,39 +131,40 @@
                 <!-- Conversations -->
                 <div class="conversations-list-body">
                     <!-- Empty State -->
-                    <div th:if="${conversations.isEmpty()}" class="text-center py-5">
+                    <div th:if="${messages.isEmpty()}" class="text-center py-5">
                         <i class="bi bi-inbox display-4 text-muted"></i>
-                        <p class="mt-3 text-muted">No messages yet</p>
+                        <p class="mt-3 text-muted">Chưa có tin nhắn nào</p>
                         <a th:href="@{/messages/compose}" class="btn btn-sm btn-primary">
-                            Send a message
+                            Gửi tin nhắn
                         </a>
                     </div>
 
-                    <!-- Conversation Items -->
-                    <div th:each="conversation : ${conversations}" 
+                    <!-- Message Items -->
+                    <div th:each="message : ${messages.content}" 
                          class="conversation-item" 
-                         th:classappend="${!conversation.isRead} ? 'unread' : ''"
-                         th:attr="data-conversation-id=${conversation.id}"
-                         onclick="loadConversation(this.dataset.conversationId)">
-                        <div class="d-flex">
-                            <img th:src="${conversation.otherUser.profileImage != null ? conversation.otherUser.profileImage : 'https://ui-avatars.com/api/?name=' + conversation.otherUser.username}" 
-                                 class="rounded-circle me-3" 
-                                 width="40" 
-                                 height="40" 
-                                 alt="avatar">
-                            <div class="flex-grow-1 overflow-hidden">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h6 class="mb-0" th:text="${conversation.otherUser.username}">Username</h6>
-                                    <small class="text-muted" th:text="${#temporals.format(conversation.lastMessageAt, 'MMM dd')}">date</small>
-                                </div>
-                                <p class="mb-0 text-muted small text-truncate" th:text="${conversation.lastMessage}">
-                                    Last message preview...
+                         th:classappend="${!message.isRead} ? 'unread' : ''"
+                         th:attr="data-message-id=${message.id}">
+                        <a th:href="@{/messages/{id}(id=${message.id})}" class="text-decoration-none text-dark d-block">
+                            <div class="d-flex">
+                                <img th:src="${message.sender.profileImage != null ? message.sender.profileImage : 'https://ui-avatars.com/api/?name=' + message.sender.username}" 
+                                     class="rounded-circle me-3" 
+                                     width="40" 
+                                     height="40" 
+                                     alt="avatar">
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="mb-0" th:text="${message.sender.username}">Username</h6>
+                                        <small class="text-muted" th:text="${#temporals.format(message.createdAt, 'dd/MM HH:mm')}">date</small>
+                                    </div>
+                                    <p class="mb-0 text-muted small text-truncate" th:text="${message.subject}">
+                                    Nội dung tin nhắn...
                                 </p>
-                            </div>
-                            <div th:if="${!conversation.isRead}" class="ms-2">
-                                <span class="badge bg-primary rounded-pill">•</span>
+                                <div th:if="${!message.isRead}" class="ms-2">
+                                    <span class="badge bg-primary rounded-pill">•</span>
+                                </div>
                             </div>
                         </div>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -49,13 +49,17 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                // Admin and Manager areas (must be first)
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
+                // Actions that require authentication (must be before permitAll)
+                .requestMatchers("/questions/ask", "/questions/*/edit", "/answers/*/edit").authenticated()
+                .requestMatchers("/questions/*/comments", "/answers/*/comments").authenticated()
+                // Public pages
                 .requestMatchers("/", "/home", "/questions", "/questions/**", "/tags", "/tags/**", "/users", "/users/**").permitAll()
                 .requestMatchers("/login", "/register", "/api/auth/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**", "/webjars/**").permitAll()
                 .requestMatchers("/error", "/error/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("/questions/ask", "/questions/*/edit", "/answers/*/edit").authenticated()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exception -> exception

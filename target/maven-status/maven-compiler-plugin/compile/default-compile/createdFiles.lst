@@ -21,6 +21,7 @@ com\stackoverflow\controller\user\UserController.class
 com\stackoverflow\repository\UserGroupRepository.class
 com\stackoverflow\service\common\ActivityLogService.class
 com\stackoverflow\controller\admin\AdminActivityLogController.class
+com\stackoverflow\controller\admin\AdminTagController.class
 com\stackoverflow\service\common\AnswerService.class
 com\stackoverflow\controller\user\AnswerController.class
 com\stackoverflow\service\common\AdminService.class

@@ -127,18 +127,23 @@ public class AdminUserController {
     @PostMapping("/{id}/ban")
     public String banUser(
             @PathVariable Long id,
-            @RequestParam String reason,
+            @RequestParam(required = false, defaultValue = "Violated community guidelines") String reason,
             @RequestParam(required = false) Integer days,
             RedirectAttributes redirectAttributes) {
         
         try {
+            // Default reason if empty
+            String banReason = (reason == null || reason.trim().isEmpty()) 
+                    ? "Violated community guidelines" 
+                    : reason;
+            
             if (days != null && days > 0) {
                 LocalDateTime bannedUntil = LocalDateTime.now().plusDays(days);
-                adminService.banUser(id, reason, bannedUntil);
+                adminService.banUser(id, banReason, bannedUntil);
                 redirectAttributes.addFlashAttribute("successMessage", 
                     "Đã khóa tài khoản trong " + days + " ngày!");
             } else {
-                adminService.banUserPermanently(id, reason);
+                adminService.banUserPermanently(id, banReason);
                 redirectAttributes.addFlashAttribute("successMessage", 
                     "Đã khóa tài khoản vĩnh viễn!");
             }

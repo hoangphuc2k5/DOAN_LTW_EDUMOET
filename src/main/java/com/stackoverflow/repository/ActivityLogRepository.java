@@ -23,4 +23,7 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
     long countByAction(String action);
     
     long countByCreatedAtAfter(LocalDateTime date);
+    
+    // For user deletion
+    void deleteByUser(User user);
 }

@@ -79,7 +79,7 @@ public class AdminModerationController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         var comments = moderationService.getPendingComments(pageable);
         
-        model.addAttribute("comments", comments);
+        model.addAttribute("pendingComments", comments);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", comments.getTotalPages());
         model.addAttribute("pageTitle", "Pending Comments - Admin");

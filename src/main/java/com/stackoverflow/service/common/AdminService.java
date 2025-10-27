@@ -1,7 +1,8 @@
 package com.stackoverflow.service.common;
 
 import com.stackoverflow.entity.User;
-import com.stackoverflow.repository.UserRepository;
+import com.stackoverflow.entity.Question;
+import com.stackoverflow.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,24 @@ public class AdminService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private ActivityLogRepository activityLogRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     // ================== QUẢN LÝ NGƯỜI DÙNG ==================
 
@@ -158,9 +177,49 @@ public class AdminService {
 
     /**
      * Xóa người dùng (cẩn thận!)
+     * Xóa tất cả dữ liệu liên quan trước
      */
     public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Delete related entities first to avoid FK constraint violations
+        // Note: This will delete ALL user data permanently!
+        
+        // 1. Delete notifications
+        notificationRepository.deleteByUser(user);
+        
+        // 2. Delete activity logs
+        activityLogRepository.deleteByUser(user);
+        
+        // 3. Delete messages (sent and received)
+        messageRepository.deleteBySender(user);
+        messageRepository.deleteByReceiver(user);
+        
+        // 4. Delete reports
+        reportRepository.deleteByReporter(user);
+        
+        // 5. Delete questions manually (to properly handle question_tags FK constraint)
+        // Query all questions by this user and delete them one by one
+        List<Question> userQuestions = questionRepository.findByAuthor(user);
+        System.out.println("Deleting " + userQuestions.size() + " questions for user " + user.getUsername());
+        
+        for (Question question : userQuestions) {
+            try {
+                questionService.deleteQuestion(question.getId());
+                System.out.println("Deleted question ID: " + question.getId());
+            } catch (Exception e) {
+                System.err.println("Error deleting question " + question.getId() + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
+        // 6. Answers and Comments will be cascade deleted via JPA @OneToMany mappings
+        
+        // Finally, delete the user
+        System.out.println("Deleting user ID: " + userId);
         userRepository.deleteById(userId);
+        System.out.println("Successfully deleted user: " + user.getUsername());
     }
 
     /**

@@ -237,5 +237,49 @@ public class AdminQuestionController {
             return "redirect:/admin/questions/" + id;
         }
     }
+
+    /**
+     * Toggle close/open question
+     */
+    @PostMapping("/{id}/toggle-close")
+    public String toggleCloseQuestion(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Question question = questionService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+            
+            if (question.getIsLocked()) {
+                questionService.unlockQuestion(id);
+                redirectAttributes.addFlashAttribute("successMessage", "Question opened successfully!");
+            } else {
+                questionService.lockQuestion(id);
+                redirectAttributes.addFlashAttribute("successMessage", "Question closed successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/admin/questions/" + id;
+    }
+
+    /**
+     * Toggle pin/unpin question
+     */
+    @PostMapping("/{id}/toggle-pin")
+    public String togglePinQuestion(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Question question = questionService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+            
+            if (question.getIsPinned() != null && question.getIsPinned()) {
+                questionService.unpinQuestion(id);
+                redirectAttributes.addFlashAttribute("successMessage", "Question unpinned successfully!");
+            } else {
+                questionService.pinQuestion(id);
+                redirectAttributes.addFlashAttribute("successMessage", "Question pinned successfully!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/admin/questions/" + id;
+    }
 }
 

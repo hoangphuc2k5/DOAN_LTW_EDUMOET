@@ -15,7 +15,8 @@ import java.util.List;
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     
-    List<Answer> findByQuestionOrderByVotesDescCreatedAtDesc(Question question);
+    @Query("SELECT a FROM Answer a LEFT JOIN FETCH a.images WHERE a.question = :question ORDER BY a.votes DESC, a.createdAt DESC")
+    List<Answer> findByQuestionOrderByVotesDescCreatedAtDesc(@Param("question") Question question);
     
     Page<Answer> findByAuthor(User author, Pageable pageable);
     

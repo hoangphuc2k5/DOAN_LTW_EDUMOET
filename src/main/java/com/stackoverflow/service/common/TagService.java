@@ -75,4 +75,48 @@ public class TagService {
     public Tag save(Tag tag) {
         return tagRepository.save(tag);
     }
+
+    /**
+     * Xóa thẻ
+     */
+    @Transactional
+    public void deleteTag(Long tagId) {
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new RuntimeException("Tag not found"));
+        
+        if (tag.getQuestionCount() > 0) {
+            throw new RuntimeException("Không thể xóa thẻ đang được sử dụng bởi " + tag.getQuestionCount() + " câu hỏi");
+        }
+        
+        tagRepository.deleteById(tagId);
+    }
+
+    /**
+     * Gộp 2 thẻ: chuyển tất cả câu hỏi từ sourceTag sang targetTag
+     */
+    @Transactional
+    public void mergeTags(Long sourceTagId, Long targetTagId) {
+        if (sourceTagId.equals(targetTagId)) {
+            throw new RuntimeException("Không thể gộp thẻ với chính nó");
+        }
+        
+        Tag sourceTag = tagRepository.findById(sourceTagId)
+                .orElseThrow(() -> new RuntimeException("Source tag not found"));
+        Tag targetTag = tagRepository.findById(targetTagId)
+                .orElseThrow(() -> new RuntimeException("Target tag not found"));
+        
+        // Di chuyển tất cả questions từ source sang target
+        sourceTag.getQuestions().forEach(question -> {
+            question.getTags().remove(sourceTag);
+            question.getTags().add(targetTag);
+        });
+        
+        // Cập nhật question count
+        targetTag.setQuestionCount(targetTag.getQuestionCount() + sourceTag.getQuestionCount());
+        sourceTag.setQuestionCount(0);
+        
+        // Xóa source tag
+        tagRepository.delete(sourceTag);
+        tagRepository.save(targetTag);
+    }
 }

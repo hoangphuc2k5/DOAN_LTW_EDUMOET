@@ -46,15 +46,47 @@ public class QuestionController {
     private TagService tagService;
 
     @GetMapping("/{id}")
-    public String viewQuestion(@PathVariable Long id, Model model) {
+    public String viewQuestion(@PathVariable Long id, Model model, Authentication authentication) {
         Question question = questionService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
+        
+        // Check if question is approved or user has permission to view
+        if (!question.getIsApproved()) {
+            // Only author, admin, or manager can view unapproved questions
+            if (authentication == null) {
+                throw new RuntimeException("Question is pending moderation");
+            }
+            
+            String username = authentication.getName();
+            boolean isAuthor = question.getAuthor().getUsername().equals(username);
+            boolean isAdminOrManager = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_MANAGER"));
+            
+            if (!isAuthor && !isAdminOrManager) {
+                throw new RuntimeException("Question is pending moderation");
+            }
+        }
         
         // Increment views
         questionService.incrementViews(question);
         
+        List<Answer> answers = answerService.getAnswersByQuestion(question);
+        
+        // Debug: Log images for each answer
+        System.out.println("=== Question ID: " + id + " ===");
+        System.out.println("Total Answers: " + answers.size());
+        for (Answer answer : answers) {
+            System.out.println("Answer ID: " + answer.getId() + " - Images count: " + 
+                (answer.getImages() != null ? answer.getImages().size() : "NULL"));
+            if (answer.getImages() != null && !answer.getImages().isEmpty()) {
+                answer.getImages().forEach(img -> 
+                    System.out.println("  - Image ID: " + img.getId() + ", Path: " + img.getPath())
+                );
+            }
+        }
+        
         model.addAttribute("question", question);
-        model.addAttribute("answers", answerService.getAnswersByQuestion(question));
+        model.addAttribute("answers", answers);
         model.addAttribute("questionComments", commentService.getCommentsByQuestion(question));
         model.addAttribute("pageTitle", question.getTitle() + " - Stack Overflow Clone");
         

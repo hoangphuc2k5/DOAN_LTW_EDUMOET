@@ -116,6 +116,36 @@ public class ImageService {
         return imageAttachmentRepository.save(image);
     }
     
+    public ImageAttachment saveAnswerImage(MultipartFile file, Answer answer) throws IOException {
+        validateImage(file);
+        
+        // Create upload directory if it doesn't exist
+        Path uploadDir = Paths.get(uploadPath);
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
+        // Generate unique filename
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+        String filename = UUID.randomUUID().toString() + extension;
+        
+        // Save file to disk
+        Path filePath = uploadDir.resolve(filename);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        
+        // Create and save image attachment
+        ImageAttachment image = new ImageAttachment();
+        image.setFileName(originalFilename);
+        image.setPath(filename);
+        image.setContentType(file.getContentType());
+        image.setAnswer(answer);
+        image.setUploadedBy(answer.getAuthor());
+        image.setCreatedAt(LocalDateTime.now());
+        
+        return imageAttachmentRepository.save(image);
+    }
+    
     private void validateImage(MultipartFile file) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");

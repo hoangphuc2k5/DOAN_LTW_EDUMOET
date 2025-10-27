@@ -3,15 +3,19 @@ package com.stackoverflow.controller.user;
 import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
+import com.stackoverflow.entity.ImageAttachment;
 import com.stackoverflow.service.common.AnswerService;
 import com.stackoverflow.service.common.QuestionService;
 import com.stackoverflow.service.common.UserService;
+import com.stackoverflow.service.common.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 
@@ -27,28 +31,55 @@ public class AnswerController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ImageService imageService;
 
     @PostMapping("/question/{questionId}")
     public String postAnswer(
             @PathVariable Long questionId,
-            @Valid @ModelAttribute Answer answer,
-            BindingResult result,
+            @RequestParam String body,
+            @RequestParam(required = false) MultipartFile[] images,
             Authentication authentication,
-            Model model) {
+            RedirectAttributes redirectAttributes) {
         
-        if (result.hasErrors()) {
-            return "redirect:/questions/" + questionId;
+        try {
+            Question question = questionService.findById(questionId)
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+            
+            User author = userService.findByUsername(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            Answer answer = new Answer();
+            answer.setBody(body);
+            answer.setQuestion(question);
+            answer.setAuthor(author);
+            
+            // Save answer first to get ID
+            Answer savedAnswer = answerService.createAnswer(answer);
+            
+            // Handle image uploads if any
+            if (images != null && images.length > 0) {
+                for (MultipartFile imageFile : images) {
+                    if (!imageFile.isEmpty()) {
+                        try {
+                            ImageAttachment image = imageService.saveAnswerImage(imageFile, savedAnswer);
+                            savedAnswer.getImages().add(image);
+                            System.out.println("✅ Saved image for answer ID: " + savedAnswer.getId() + " - Image ID: " + image.getId());
+                        } catch (Exception imgEx) {
+                            System.err.println("❌ Error saving image: " + imgEx.getMessage());
+                        }
+                    }
+                }
+                // Update answer with images
+                answerService.updateAnswer(savedAnswer);
+            }
+            
+            redirectAttributes.addFlashAttribute("successMessage", "Answer posted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+            e.printStackTrace();
         }
-        
-        Question question = questionService.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
-        
-        User author = userService.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        answer.setQuestion(question);
-        answer.setAuthor(author);
-        answerService.createAnswer(answer);
         
         return "redirect:/questions/" + questionId;
     }

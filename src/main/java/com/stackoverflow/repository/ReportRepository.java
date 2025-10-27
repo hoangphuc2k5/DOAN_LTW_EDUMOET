@@ -15,4 +15,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Page<Report> findByStatus(String status, Pageable pageable);
     
     long countByStatus(String status);
+    
+    // For user deletion
+    void deleteByReporter(User reporter);
 }

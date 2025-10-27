@@ -53,7 +53,7 @@ public class Question {
     private Boolean isLocked = false;
 
     @Column(nullable = false)
-    private Boolean isApproved = true;  // For moderation
+    private Boolean isApproved = false;  // For moderation - default needs approval
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)

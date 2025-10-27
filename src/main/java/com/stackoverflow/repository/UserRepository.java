@@ -1,6 +1,6 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.User;
+import com.stackoverflow.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

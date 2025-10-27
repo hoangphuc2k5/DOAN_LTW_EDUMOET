@@ -1,8 +1,8 @@
 package com.stackoverflow.config;
 
-import com.stackoverflow.model.Question;
-import com.stackoverflow.model.Tag;
-import com.stackoverflow.model.User;
+import com.stackoverflow.entity.Question;
+import com.stackoverflow.entity.Tag;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
 import com.stackoverflow.repository.UserRepository;

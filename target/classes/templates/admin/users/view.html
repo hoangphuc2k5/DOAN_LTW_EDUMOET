@@ -1,45 +1,40 @@
 <!DOCTYPE html>
-<html lang="en" 
-      xmlns:th="http://www.thymeleaf.org" 
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${pageTitle}">User Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Người Dùng - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
-<div layout:fragment="content">
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-2 d-md-block bg-light sidebar">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
                 <div th:replace="~{admin/sidebar :: sidebar}"></div>
             </nav>
 
             <!-- Main content -->
-            <main class="col-md-10 ms-sm-auto px-md-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">
-                        <i class="bi bi-person-circle"></i> User Details
-                    </h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <a th:href="@{/admin/users}" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-arrow-left"></i> Back to List
-                            </a>
-                            <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                        </div>
+                    <h1 class="h2"><i class="bi bi-person-circle"></i> Chi Tiết Người Dùng</h1>
+                    <div class="btn-toolbar">
+                        <a th:href="@{/admin/users}" class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-left"></i> Quay Lại
+                        </a>
+                        <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Sửa
+                        </a>
                     </div>
                 </div>
 
                 <!-- Alert Messages -->
-                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
                     <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
                     <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -47,82 +42,66 @@
                 <!-- User Info -->
                 <div class="row">
                     <div class="col-md-4">
+                        <!-- Profile Card -->
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="m-0">Thông Tin Cơ Bản</h6>
                             </div>
                             <div class="card-body text-center">
-                                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Avatar">
-                                <h4 th:text="${user.username}">username</h4>
+                                <i class="bi bi-person-circle" style="font-size: 5rem; color: #0066cc;"></i>
+                                <h4 class="mt-3" th:text="${user.username}">username</h4>
                                 <p class="text-muted" th:text="${user.email}">email@example.com</p>
-                                <span class="badge" 
-                                      th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : (${user.role == 'MANAGER'} ? 'bg-info' : 'bg-primary')"
-                                      th:text="${user.role}">USER</span>
+                                <span class="badge" th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : (${user.role == 'MANAGER'} ? 'bg-warning' : 'bg-primary')" th:text="${user.role}">USER</span>
                             </div>
                         </div>
 
                         <!-- Quick Actions -->
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="m-0">Thao Tác Nhanh</h6>
                             </div>
                             <div class="card-body">
                                 <div class="d-grid gap-2">
-                                    <!-- Change Role -->
                                     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#changeRoleModal">
-                                        <i class="bi bi-shield-check"></i> Change Role
+                                        <i class="bi bi-shield-check"></i> Đổi Vai Trò
                                     </button>
-
-                                    <!-- Reset Password -->
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
-                                        <i class="bi bi-key"></i> Reset Password
+                                        <i class="bi bi-key"></i> Đặt Lại Mật Khẩu
                                     </button>
-
-                                    <!-- Ban/Unban -->
-                                    <button th:if="${!user.isBanned}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#banUserModal">
-                                        <i class="bi bi-x-circle"></i> Ban User
-                                    </button>
+                                    <form th:if="${!user.isBanned}" th:action="@{/admin/users/{id}/ban(id=${user.id})}" method="post" onsubmit="return confirm('Bạn có chắc muốn khóa người dùng này?')">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100">
+                                            <i class="bi bi-lock"></i> Khóa Người Dùng
+                                        </button>
+                                    </form>
                                     <form th:if="${user.isBanned}" th:action="@{/admin/users/{id}/unban(id=${user.id})}" method="post">
                                         <button type="submit" class="btn btn-success btn-sm w-100">
-                                            <i class="bi bi-check-circle"></i> Unban User
+                                            <i class="bi bi-unlock"></i> Mở Khóa
                                         </button>
                                     </form>
-
-                                    <!-- Activate/Deactivate -->
-                                    <form th:if="${!user.isActive}" th:action="@{/admin/users/{id}/activate(id=${user.id})}" method="post">
-                                        <button type="submit" class="btn btn-success btn-sm w-100">
-                                            <i class="bi bi-toggle-on"></i> Activate
+                                    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('CẢNH BÁO: Hành động này không thể hoàn tác! Bạn có chắc muốn xóa người dùng này?')">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100">
+                                            <i class="bi bi-trash"></i> Xóa Người Dùng
                                         </button>
                                     </form>
-                                    <form th:if="${user.isActive}" th:action="@{/admin/users/{id}/deactivate(id=${user.id})}" method="post">
-                                        <button type="submit" class="btn btn-secondary btn-sm w-100">
-                                            <i class="bi bi-toggle-off"></i> Deactivate
-                                        </button>
-                                    </form>
-
-                                    <!-- Delete -->
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                                        <i class="bi bi-trash"></i> Delete User
-                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-8">
-                        <!-- Details -->
+                        <!-- Details Card -->
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Details</h6>
+                            <div class="card-header bg-info text-white">
+                                <h6 class="m-0">Chi Tiết Đầy Đủ</h6>
                             </div>
                             <div class="card-body">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <th width="30%">User ID:</th>
+                                        <th width="30%">ID:</th>
                                         <td th:text="${user.id}">1</td>
                                     </tr>
                                     <tr>
-                                        <th>Username:</th>
+                                        <th>Tên Người Dùng:</th>
                                         <td th:text="${user.username}">username</td>
                                     </tr>
                                     <tr>
@@ -130,66 +109,33 @@
                                         <td th:text="${user.email}">email@example.com</td>
                                     </tr>
                                     <tr>
-                                        <th>Role:</th>
+                                        <th>Vai Trò:</th>
                                         <td>
-                                            <span class="badge" 
-                                                  th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : (${user.role == 'MANAGER'} ? 'bg-info' : 'bg-primary')"
-                                                  th:text="${user.role}">USER</span>
+                                            <span class="badge" th:classappend="${user.role == 'ADMIN'} ? 'bg-danger' : (${user.role == 'MANAGER'} ? 'bg-warning' : 'bg-primary')" th:text="${user.role}">USER</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Status:</th>
+                                        <th>Trạng Thái:</th>
                                         <td>
-                                            <span th:if="${user.isActive && !user.isBanned}" class="badge bg-success">Active</span>
-                                            <span th:if="${user.isBanned}" class="badge bg-danger">Banned</span>
-                                            <span th:if="${!user.isActive}" class="badge bg-secondary">Inactive</span>
-                                        </td>
-                                    </tr>
-                                    <tr th:if="${user.isBanned}">
-                                        <th>Ban Reason:</th>
-                                        <td th:text="${user.banReason}">-</td>
-                                    </tr>
-                                    <tr th:if="${user.isBanned && user.bannedUntil != null}">
-                                        <th>Banned Until:</th>
-                                        <td th:text="${#temporals.format(user.bannedUntil, 'MMM dd, yyyy HH:mm')}">-</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Reputation:</th>
-                                        <td th:text="${user.reputation}">0</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Points:</th>
-                                        <td th:text="${user.points}">0</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Level:</th>
-                                        <td th:text="${user.level}">1</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Email Verified:</th>
-                                        <td>
-                                            <span th:if="${user.emailVerified}" class="badge bg-success">Yes</span>
-                                            <span th:unless="${user.emailVerified}" class="badge bg-warning">No</span>
+                                            <span th:if="${user.isBanned}" class="badge bg-danger">Bị Khóa</span>
+                                            <span th:unless="${user.isBanned}" class="badge bg-success">Hoạt Động</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>2FA Enabled:</th>
-                                        <td>
-                                            <span th:if="${user.twoFactorEnabled}" class="badge bg-success">Yes</span>
-                                            <span th:unless="${user.twoFactorEnabled}" class="badge bg-secondary">No</span>
-                                        </td>
+                                        <th>Danh Tiếng:</th>
+                                        <td th:text="${user.reputation ?: 0}">0</td>
                                     </tr>
                                     <tr>
-                                        <th>Location:</th>
+                                        <th>Vị Trí:</th>
                                         <td th:text="${user.location ?: '-'}">-</td>
                                     </tr>
                                     <tr>
-                                        <th>About:</th>
+                                        <th>Giới Thiệu:</th>
                                         <td th:text="${user.about ?: '-'}">-</td>
                                     </tr>
                                     <tr>
-                                        <th>Joined Date:</th>
-                                        <td th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy HH:mm')}">Jan 01, 2024</td>
+                                        <th>Ngày Tham Gia:</th>
+                                        <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
                                     </tr>
                                 </table>
                             </div>
@@ -203,23 +149,23 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Change User Role</h5>
+                                <h5 class="modal-title">Đổi Vai Trò</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <form th:action="@{/admin/users/{id}/change-role(id=${user.id})}" method="post">
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label class="form-label">Select New Role:</label>
+                                        <label class="form-label">Chọn Vai Trò Mới:</label>
                                         <select name="role" class="form-select" required>
-                                            <option value="USER" th:selected="${user.role == 'USER'}">User</option>
-                                            <option value="MANAGER" th:selected="${user.role == 'MANAGER'}">Manager</option>
-                                            <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">Admin</option>
+                                            <option value="USER" th:selected="${user.role == 'USER'}">Người Dùng</option>
+                                            <option value="MANAGER" th:selected="${user.role == 'MANAGER'}">Quản Lý</option>
+                                            <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">Quản Trị Viên</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Change Role</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="submit" class="btn btn-primary">Đổi Vai Trò</button>
                                 </div>
                             </form>
                         </div>
@@ -231,69 +177,20 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Reset Password</h5>
+                                <h5 class="modal-title">Đặt Lại Mật Khẩu</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <form th:action="@{/admin/users/{id}/reset-password(id=${user.id})}" method="post">
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label class="form-label">New Password:</label>
+                                        <label class="form-label">Mật Khẩu Mới:</label>
                                         <input type="password" name="newPassword" class="form-control" required minlength="6">
+                                        <small class="text-muted">Tối thiểu 6 ký tự</small>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-warning">Reset Password</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ban User Modal -->
-                <div class="modal fade" id="banUserModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Ban User</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <form th:action="@{/admin/users/{id}/ban(id=${user.id})}" method="post">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label class="form-label">Reason:</label>
-                                        <textarea name="reason" class="form-control" rows="3" required></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Duration (days, leave empty for permanent):</label>
-                                        <input type="number" name="days" class="form-control" min="1" placeholder="Leave empty for permanent ban">
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Ban User</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Delete User Modal -->
-                <div class="modal fade" id="deleteUserModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title">Delete User</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post">
-                                <div class="modal-body">
-                                    <p class="text-danger"><strong>Warning:</strong> This action cannot be undone!</p>
-                                    <p>Are you sure you want to delete user <strong th:text="${user.username}">username</strong>?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete User</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="submit" class="btn btn-warning">Đặt Lại</button>
                                 </div>
                             </form>
                         </div>
@@ -304,18 +201,6 @@
         </div>
     </div>
 
-    <style>
-        .sidebar {
-            position: fixed;
-            top: 56px;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            padding: 48px 0 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-        }
-    </style>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

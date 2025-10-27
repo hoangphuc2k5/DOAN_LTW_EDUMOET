@@ -1,6 +1,6 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.Tag;
+import com.stackoverflow.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,8 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.ImageAttachment;
-import com.stackoverflow.model.Question;
-import com.stackoverflow.model.Answer;
+import com.stackoverflow.entity.ImageAttachment;
+import com.stackoverflow.entity.Question;
+import com.stackoverflow.entity.Answer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

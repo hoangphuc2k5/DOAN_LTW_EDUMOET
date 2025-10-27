@@ -1,7 +1,7 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.Category;
-import com.stackoverflow.model.User;
+import com.stackoverflow.entity.Category;
+import com.stackoverflow.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

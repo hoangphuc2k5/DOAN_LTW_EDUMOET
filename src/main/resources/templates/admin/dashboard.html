@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" 
+<html lang="vi" 
       xmlns:th="http://www.thymeleaf.org" 
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Admin Dashboard</title>
+    <title>Bảng Điều Khiển Quản Trị</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -13,16 +13,16 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h2 mb-1">
-                <i class="bi bi-shield-lock text-danger"></i> Admin Dashboard
+                <i class="bi bi-shield-lock text-danger"></i> Bảng Điều Khiển Quản Trị
             </h1>
-            <p class="text-muted mb-0">Welcome back, <span sec:authentication="name">Admin</span></p>
+            <p class="text-muted mb-0">Xin chào, <span sec:authentication="name">Admin</span></p>
         </div>
         <div>
             <a th:href="@{/admin/all-features}" class="btn btn-danger me-2">
-                <i class="bi bi-grid-3x3-gap"></i> All Features
+                <i class="bi bi-grid-3x3-gap"></i> Tất Cả Tính Năng
             </a>
             <button class="btn btn-outline-primary" onclick="location.reload()">
-                <i class="bi bi-arrow-clockwise"></i> Refresh
+                <i class="bi bi-arrow-clockwise"></i> Làm Mới
             </button>
         </div>
     </div>
@@ -30,29 +30,29 @@
     <!-- Alert for pending actions -->
     <div class="alert alert-warning alert-dismissible fade show" th:if="${pendingReports > 0 or pendingQuestions > 0}">
         <i class="bi bi-exclamation-triangle"></i>
-        <strong>Attention Required!</strong>
+        <strong>Cần Chú Ý!</strong>
         <span th:if="${pendingReports > 0}">
-            <span th:text="${pendingReports}">0</span> pending reports
+            <span th:text="${pendingReports}">0</span> báo cáo chờ xử lý
         </span>
         <span th:if="${pendingQuestions > 0}">
-            and <span th:text="${pendingQuestions}">0</span> questions awaiting approval
+            và <span th:text="${pendingQuestions}">0</span> câu hỏi chờ duyệt
         </span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
     <!-- Statistics Cards Row -->
     <div class="row g-4 mb-4">
-        <!-- Total Users -->
+        <!-- Tổng Người Dùng -->
         <div class="col-lg-3 col-md-6">
             <div class="card admin-card card-primary h-100 hover-shadow">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-2">Total Users</h6>
+                            <h6 class="text-white-50 mb-2">Tổng Người Dùng</h6>
                             <h2 class="mb-0" th:text="${totalUsers}">0</h2>
                             <small>
                                 <i class="bi bi-arrow-up"></i> 
-                                <span th:text="${newUsersToday}">0</span> today
+                                <span th:text="${newUsersToday}">0</span> hôm nay
                             </small>
                         </div>
                         <div>
@@ -61,24 +61,24 @@
                     </div>
                     <div class="mt-3">
                         <a th:href="@{/admin/users}" class="text-white text-decoration-none">
-                            View all <i class="bi bi-arrow-right"></i>
+                            Xem tất cả <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Total Questions -->
+        <!-- Tổng Câu Hỏi -->
         <div class="col-lg-3 col-md-6">
             <div class="card admin-card card-success h-100 hover-shadow">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-2">Total Questions</h6>
+                            <h6 class="text-white-50 mb-2">Tổng Câu Hỏi</h6>
                             <h2 class="mb-0" th:text="${totalQuestions}">0</h2>
                             <small>
                                 <i class="bi bi-arrow-up"></i> 
-                                <span th:text="${newQuestionsToday}">0</span> today
+                                <span th:text="${newQuestionsToday}">0</span> hôm nay
                             </small>
                         </div>
                         <div>
@@ -87,24 +87,24 @@
                     </div>
                     <div class="mt-3">
                         <a th:href="@{/admin/questions}" class="text-white text-decoration-none">
-                            Manage <i class="bi bi-arrow-right"></i>
+                            Quản Lý <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Total Answers -->
+        <!-- Tổng Câu Trả Lời -->
         <div class="col-lg-3 col-md-6">
             <div class="card admin-card card-warning h-100 hover-shadow">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-2">Total Answers</h6>
+                            <h6 class="text-white-50 mb-2">Tổng Câu Trả Lời</h6>
                             <h2 class="mb-0" th:text="${totalAnswers}">0</h2>
                             <small>
                                 <i class="bi bi-arrow-up"></i> 
-                                <span th:text="${newAnswersToday}">0</span> today
+                                <span th:text="${newAnswersToday}">0</span> hôm nay
                             </small>
                         </div>
                         <div>
@@ -113,22 +113,22 @@
                     </div>
                     <div class="mt-3">
                         <a href="#" class="text-white text-decoration-none">
-                            View stats <i class="bi bi-arrow-right"></i>
+                            Xem thống kê <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Pending Reports -->
+        <!-- Báo Cáo Chờ Xử Lý -->
         <div class="col-lg-3 col-md-6">
             <div class="card admin-card card-danger h-100 hover-shadow">
                 <div class="card-body text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 mb-2">Pending Reports</h6>
+                            <h6 class="text-white-50 mb-2">Báo Cáo Chờ Xử Lý</h6>
                             <h2 class="mb-0" th:text="${pendingReports}">0</h2>
-                            <small>Require attention</small>
+                            <small>Cần xử lý</small>
                         </div>
                         <div>
                             <i class="bi bi-flag display-4 opacity-50"></i>
@@ -136,7 +136,7 @@
                     </div>
                     <div class="mt-3">
                         <a th:href="@{/admin/reports}" class="text-white text-decoration-none">
-                            Review <i class="bi bi-arrow-right"></i>
+                            Xem xét <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
             <div class="card text-center h-100">
                 <div class="card-body">
                     <h3 class="text-primary mb-1" th:text="${activeUsers}">0</h3>
-                    <small class="text-muted">Active Users</small>
+                    <small class="text-muted">Người Dùng Hoạt Động</small>
                 </div>
             </div>
         </div>
@@ -158,7 +158,7 @@
             <div class="card text-center h-100">
                 <div class="card-body">
                     <h3 class="text-success mb-1" th:text="${totalComments}">0</h3>
-                    <small class="text-muted">Comments</small>
+                    <small class="text-muted">Bình Luận</small>
                 </div>
             </div>
         </div>
@@ -166,7 +166,7 @@
             <div class="card text-center h-100">
                 <div class="card-body">
                     <h3 class="text-warning mb-1" th:text="${totalTags}">0</h3>
-                    <small class="text-muted">Tags</small>
+                    <small class="text-muted">Thẻ</small>
                 </div>
             </div>
         </div>
@@ -174,7 +174,7 @@
             <div class="card text-center h-100">
                 <div class="card-body">
                     <h3 class="text-info mb-1" th:text="${totalCategories}">0</h3>
-                    <small class="text-muted">Categories</small>
+                    <small class="text-muted">Chuyên Mục</small>
                 </div>
             </div>
         </div>
@@ -182,7 +182,7 @@
             <div class="card text-center h-100">
                 <div class="card-body">
                     <h3 class="text-danger mb-1" th:text="${bannedUsers}">0</h3>
-                    <small class="text-muted">Banned Users</small>
+                    <small class="text-muted">Người Dùng Bị Khóa</small>
                 </div>
             </div>
         </div>
@@ -190,70 +190,70 @@
             <div class="card text-center h-100">
                 <div class="card-body">
                     <h3 class="text-secondary mb-1" th:text="${unreadNotifications}">0</h3>
-                    <small class="text-muted">Notifications</small>
+                    <small class="text-muted">Thông Báo</small>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <!-- Quick Actions -->
+        <!-- Thao Tác Nhanh -->
         <div class="col-lg-4">
             <div class="card h-100">
                 <div class="card-header bg-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-lightning-charge"></i> Quick Actions
+                        <i class="bi bi-lightning-charge"></i> Thao Tác Nhanh
                     </h5>
                 </div>
                 <div class="list-group list-group-flush">
                     <a th:href="@{/admin/users}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-people text-primary"></i> Manage Users
+                        <i class="bi bi-people text-primary"></i> Quản Lý Người Dùng
                         <span class="badge bg-primary float-end" th:text="${totalUsers}">0</span>
                     </a>
                     <a th:href="@{/admin/questions}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-question-circle text-success"></i> Manage Questions
+                        <i class="bi bi-question-circle text-success"></i> Quản Lý Câu Hỏi
                         <span class="badge bg-success float-end" th:text="${totalQuestions}">0</span>
                     </a>
                     <a th:href="@{/admin/categories}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-folder text-warning"></i> Manage Categories
+                        <i class="bi bi-folder text-warning"></i> Quản Lý Chuyên Mục
                         <span class="badge bg-warning float-end" th:text="${totalCategories}">0</span>
                     </a>
                     <a th:href="@{/admin/comments}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-chat text-info"></i> Manage Comments
+                        <i class="bi bi-chat text-info"></i> Quản Lý Bình Luận
                         <span class="badge bg-info float-end" th:text="${totalComments}">0</span>
                     </a>
                     <a th:href="@{/admin/moderation}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-shield-check text-danger"></i> Moderation
+                        <i class="bi bi-shield-check text-danger"></i> Kiểm Duyệt
                         <span class="badge bg-danger float-end" th:text="${pendingQuestions + pendingReports}">0</span>
                     </a>
                     <a th:href="@{/admin/notifications/send}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-bell text-primary"></i> Send Notification
+                        <i class="bi bi-bell text-primary"></i> Gửi Thông Báo
                     </a>
                     <a th:href="@{/admin/statistics}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-graph-up text-success"></i> View Statistics
+                        <i class="bi bi-graph-up text-success"></i> Xem Thống Kê
                     </a>
                     <a th:href="@{/admin/system/settings}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-gear text-secondary"></i> System Settings
+                        <i class="bi bi-gear text-secondary"></i> Cài Đặt Hệ Thống
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Recent Activity -->
+        <!-- Hoạt Động Gần Đây -->
         <div class="col-lg-8">
             <div class="card h-100">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="bi bi-activity"></i> Recent Activity
+                        <i class="bi bi-activity"></i> Hoạt Động Gần Đây
                     </h5>
                     <a th:href="@{/admin/activity-logs}" class="btn btn-sm btn-outline-primary">
-                        View All
+                        Xem tất cả
                     </a>
                 </div>
                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                     <div th:if="${recentActivities == null or recentActivities.isEmpty()}" class="text-center py-5 text-muted">
                         <i class="bi bi-inbox display-4"></i>
-                        <p class="mt-3">No recent activity</p>
+                        <p class="mt-3">Không có hoạt động gần đây</p>
                     </div>
 
                     <div class="timeline" th:if="${recentActivities != null}">
@@ -270,7 +270,7 @@
                                     <p class="mb-1">
                                         <strong th:text="${log.user != null ? log.user.username : 'System'}">User</strong>
                                         <span class="text-muted" th:text="${log.action}">action</span>
-                                        <span class="text-muted" th:text="${log.entityType}">entity</span>
+                                        <span class="text-muted" th:text="${log.targetType}">object</span>
                                     </p>
                                     <small class="text-muted">
                                         <i class="bi bi-clock"></i>
@@ -290,21 +290,21 @@
 
     <!-- Reports & Moderation Section -->
     <div class="row g-4 mt-2">
-        <!-- Pending Reports -->
+        <!-- Báo Cáo Chờ Xử Lý -->
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="bi bi-flag text-danger"></i> Pending Reports
+                        <i class="bi bi-flag text-danger"></i> Báo Cáo Chờ Xử Lý
                     </h5>
                     <a th:href="@{/admin/reports}" class="btn btn-sm btn-outline-danger">
-                        View All
+                        Xem tất cả
                     </a>
                 </div>
                 <div class="card-body">
                     <div th:if="${recentReports == null or recentReports.isEmpty()}" class="text-center py-4 text-muted">
                         <i class="bi bi-check-circle display-4 text-success"></i>
-                        <p class="mt-3">No pending reports</p>
+                        <p class="mt-3">Không có báo cáo chờ xử lý</p>
                     </div>
 
                     <div class="list-group list-group-flush" th:if="${recentReports != null}">
@@ -313,16 +313,16 @@
                                 <div>
                                     <h6 class="mb-1">
                                         <span class="badge bg-danger me-2" th:text="${report.reason}">SPAM</span>
-                                        <span th:text="${report.entityType}">Question</span>
+                                        <span th:text="${report.targetType}">Question</span>
                                     </h6>
                                     <p class="mb-1 small" th:text="${#strings.abbreviate(report.description, 100)}">Description...</p>
                                     <small class="text-muted">
-                                        by <span th:text="${report.reporter.username}">user</span> 
+                                        bởi <span th:text="${report.reporter.username}">User</span> 
                                         • <span th:text="${#temporals.format(report.createdAt, 'MMM dd')}">date</span>
                                     </small>
                                 </div>
                                 <a th:href="@{/admin/reports/{id}(id=${report.id})}" class="btn btn-sm btn-outline-primary">
-                                    Review
+                                    Xem xét
                                 </a>
                             </div>
                         </div>
@@ -331,41 +331,41 @@
             </div>
         </div>
 
-        <!-- Pending Questions -->
+        <!-- Câu Hỏi Chờ Duyệt -->
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="bi bi-hourglass-split text-warning"></i> Pending Questions
+                        <i class="bi bi-hourglass-split text-warning"></i> Câu Hỏi Chờ Duyệt
                     </h5>
                     <a th:href="@{/admin/moderation/pending-questions}" class="btn btn-sm btn-outline-warning">
-                        View All
+                        Xem tất cả
                     </a>
                 </div>
                 <div class="card-body">
                     <div th:if="${pendingQuestionsList == null or pendingQuestionsList.isEmpty()}" class="text-center py-4 text-muted">
                         <i class="bi bi-check-circle display-4 text-success"></i>
-                        <p class="mt-3">All questions approved</p>
+                        <p class="mt-3">Tất cả câu hỏi đã được duyệt</p>
                     </div>
 
                     <div class="list-group list-group-flush" th:if="${pendingQuestionsList != null}">
                         <div th:each="question : ${pendingQuestionsList}" class="list-group-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1" th:text="${question.title}">Question title</h6>
+                                    <h6 class="mb-1" th:text="${question.title}">Tiêu đề câu hỏi</h6>
                                     <small class="text-muted">
-                                        by <span th:text="${question.author.username}">user</span> 
+                                        bởi <span th:text="${question.author.username}">User</span> 
                                         • <span th:text="${#temporals.format(question.createdAt, 'MMM dd')}">date</span>
                                     </small>
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <form th:action="@{/admin/questions/{id}/approve(id=${question.id})}" method="post">
+                                    <form th:action="@{/admin/questions/{id}/approve(id=${question.id})}" method="post" style="display: inline;">
                                         <button type="submit" class="btn btn-success btn-sm">
                                             <i class="bi bi-check"></i>
                                         </button>
                                     </form>
-                                    <form th:action="@{/admin/questions/{id}/reject(id=${question.id})}" method="post">
-                                        <button type="submit" class="btn btn-danger btn-sm">
+                                    <form th:action="@{/admin/questions/{id}/reject(id=${question.id})}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm ms-1">
                                             <i class="bi bi-x"></i>
                                         </button>
                                     </form>

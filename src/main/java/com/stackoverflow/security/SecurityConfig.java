@@ -52,9 +52,14 @@ public class SecurityConfig {
                 .requestMatchers("/", "/home", "/questions", "/questions/**", "/tags", "/tags/**", "/users", "/users/**").permitAll()
                 .requestMatchers("/login", "/register", "/api/auth/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**", "/webjars/**").permitAll()
-                .requestMatchers("/error").permitAll()
+                .requestMatchers("/error", "/error/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/questions/ask", "/questions/*/edit", "/answers/*/edit").authenticated()
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(exception -> exception
+                .accessDeniedPage("/error/403")
             )
             .formLogin(form -> form
                 .loginPage("/login")

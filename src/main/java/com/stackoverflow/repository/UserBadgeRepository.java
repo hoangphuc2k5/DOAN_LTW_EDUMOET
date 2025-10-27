@@ -1,8 +1,8 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.Badge;
-import com.stackoverflow.model.User;
-import com.stackoverflow.model.UserBadge;
+import com.stackoverflow.entity.Badge;
+import com.stackoverflow.entity.User;
+import com.stackoverflow.entity.UserBadge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,8 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.Answer;
-import com.stackoverflow.model.Comment;
-import com.stackoverflow.model.Question;
+import com.stackoverflow.entity.Answer;
+import com.stackoverflow.entity.Comment;
+import com.stackoverflow.entity.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

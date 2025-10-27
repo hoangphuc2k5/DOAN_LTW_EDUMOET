@@ -1,6 +1,6 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.model.SystemSettings;
+import com.stackoverflow.entity.SystemSettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

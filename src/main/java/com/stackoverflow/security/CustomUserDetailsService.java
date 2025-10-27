@@ -1,6 +1,6 @@
 package com.stackoverflow.security;
 
-import com.stackoverflow.model.User;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
